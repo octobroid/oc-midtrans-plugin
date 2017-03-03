@@ -1,0 +1,5 @@
+{
+    "require": {
+        "veritrans/veritrans-php": "dev-snap"
+    }
+}

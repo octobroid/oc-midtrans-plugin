@@ -1,0 +1,113 @@
+# ===================================
+#  Gateway Field Definitions
+# ===================================
+
+fields:
+    test_mode:
+        label: Sandbox mode
+        type: switch
+        default: true
+        tab: Configuration
+        comment: Use the Snap Sandbox Test Environment to try out payments using this gateway.
+
+    is_sanitized:
+        label: Is Sanitized
+        type: switch
+        default: true
+        tab: Configuration
+        comment: Sanitizing the data
+
+    is_3ds:
+        label: Use 3DS
+        type: switch
+        default: true
+        tab: Configuration
+        comment: Use 3D-Secure authentication when using credit card
+
+    server_key:
+        label: Server Key
+        comment: You can find your Server keys on your Veritrans dashboard in Account Setting > Access Keys section.
+        required: true
+        span: auto
+        tab: Configuration
+
+    client_key:
+        label: Client Key
+        comment: You can find your Client keys on your Veritrans dashboard in Account Setting > Access Keys section.
+        required: true
+        span: auto
+        tab: Configuration
+
+    invoice_paid_status:
+        label: Invoice paid status
+        comment: Select status to assign the invoice in case of successful payment.
+        tab: Configuration
+        span: auto
+        type: dropdown
+
+    invoice_settlement_status:
+        label: Invoice settlement status
+        comment: Select status to assign the invoice in case of settlement payment.
+        tab: Configuration
+        span: auto
+        type: dropdown
+
+    invoice_challange_status:
+        label: Invoice challange status
+        comment: Select status to assign the invoice in case of challange payment.
+        tab: Configuration
+        span: auto
+        type: dropdown
+
+    invoice_pending_status:
+        label: Invoice pending status
+        comment: Select status to assign the invoice in case of pending payment.
+        tab: Configuration
+        span: auto
+        type: dropdown
+
+    # Channels
+    is_credit_card:
+        label: Credit card
+        type: checkbox
+        tab: Channels
+    is_mandiri_clickpay:
+        label: Mandiri Clickpay
+        type: checkbox
+        tab: Channels
+    is_cimb_clicks:
+        label: Cimb Click
+        type: checkbox
+        tab: Channels
+    is_bri_epay:
+        label: BRI Epay
+        type: checkbox
+        tab: Channels
+    is_telkomsel_cash:
+        label: Telkomsel Cash
+        type: checkbox
+        tab: Channels
+    is_xl_tunai:
+        label: XL Tunai
+        type: checkbox
+        tab: Channels
+    is_mandiri_ecash:
+        label: Mandiri E-Cash
+        type: checkbox
+        tab: Channels
+    is_indosat_dompetku:
+        label: Indosat Dompetku
+        type: checkbox
+        tab: Channels
+    is_bank_transfer:
+        label: Bank Transfer
+        type: checkbox
+        tab: Channels
+    is_echannel:
+        label: Echannel
+        type: checkbox
+        tab: Channels
+    is_cstore:
+        label: Cstore
+        type: checkbox
+        tab: Channels

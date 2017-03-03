@@ -1,0 +1,29 @@
+{% set snapToken = paymentMethod.getSnapToken(paymentMethod, invoice) %}
+{% set clientKey = paymentMethod.getClientKey(paymentMethod) %}
+
+<button class="btn btn-primary btn-lg" id="pay-button">Pay Now</button>
+
+{% put scripts %}
+<!-- Snap pay -->
+<script src="{{ paymentMethod.getFormAction(paymentMethod) }}" data-client-key="{{ clientKey }}"></script>
+<script type="text/javascript">
++function ($) { "use strict";
+    $(document).ready(function() {
+        $('#pay-button').on('click', function(){
+            snap.pay('{{ snapToken }}', {
+                onSuccess: function(result){
+                    window.location.replace(result.finish_redirect_url);
+                },
+                onPending: function(result){
+                    window.location.replace(result.finish_redirect_url);
+                },
+                onError: function(result){
+                    window.location.replace(result.finish_redirect_url);
+                }
+            });
+        });
+    });
+}(window.jQuery);
+</script>
+<!-- End of Snap pay -->
+{% endput %}
