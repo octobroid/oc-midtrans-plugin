@@ -111,3 +111,7 @@ fields:
         label: Cstore
         type: checkbox
         tab: Channels
+    is_indomaret:
+        label: Indomaret
+        type: checkbox
+        tab: Channels
