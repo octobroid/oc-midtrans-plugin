@@ -7,13 +7,22 @@ fields:
         label: Sandbox mode
         type: switch
         default: true
+        span: left
         tab: Configuration
         comment: Use the Snap Sandbox Test Environment to try out payments using this gateway.
+
+    payment_logo:
+        label: Logo
+        type: mediafinder
+        mode: image
+        span: right
+        tab: Configuration
 
     is_sanitized:
         label: Is Sanitized
         type: switch
         default: true
+        span: left
         tab: Configuration
         comment: Sanitizing the data
 
