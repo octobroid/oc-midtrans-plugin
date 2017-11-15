@@ -106,6 +106,12 @@ class Snap extends GatewayBase
 			'gross_amount' => (integer) $totals->total, // no decimal allowed for creditcard
 		);
 
+        $expiry = array(
+			"start_time" => $invoice->created_at->format('Y-m-d H:i:s O'),
+			"unit"       => (string) $host->expiry_unit,
+			"duration"   => (int) $host->expiry_duration
+        );
+
         $itemDetails = array_map(function($item) {
             return array(
                 'id'       => rand(), // TODO: Get the item's ID
@@ -130,6 +136,7 @@ class Snap extends GatewayBase
 		$transaction = array(
 			'enabled_payments'    => $enabledPayments,
 			'transaction_details' => $transactionDetails,
+			'expiry'              => $expiry,
 			'customer_details'    => $customerDetails,
 			/* 'item_details'        => $itemDetails, */
 		);

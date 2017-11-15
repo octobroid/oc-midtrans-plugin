@@ -18,6 +18,22 @@ fields:
         span: right
         tab: Configuration
 
+    expiry_duration:
+        label: Expiry time (Duration)
+        type: number
+        span: right
+        tab: Configuration
+
+    expiry_unit:
+        label: Expiry time (Unit)
+        type: dropdown
+        options:
+            day: Day(s)
+            hour: Hour(s)
+            minute: Minute(s)
+        span: right
+        tab: Configuration
+
     is_sanitized:
         label: Is Sanitized
         type: switch
