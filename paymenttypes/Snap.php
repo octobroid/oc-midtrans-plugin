@@ -75,7 +75,6 @@ class Snap extends GatewayBase
     {
         if ($host->test_mode) {
             return "https://app.sandbox.veritrans.co.id/snap/snap.js";
-            return "https://app.sandbox.veritrans.co.id/snap/v1/pay";
         }
         else {
             return "https://app.midtrans.com/snap/snap.js";
