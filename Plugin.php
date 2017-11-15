@@ -37,4 +37,16 @@ class Plugin extends PluginBase
             'Octobro\Midtrans\PaymentTypes\Snap' => 'midtrans-snap',
         ];
     }
+
+    /**
+     * Registers any front-end components implemented in this plugin.
+     *
+     * @return array
+     */
+    public function registerComponents()
+    {
+        return [
+            'Octobro\Midtrans\Components\Snap' => 'snapChannel',
+        ];
+    }
 }

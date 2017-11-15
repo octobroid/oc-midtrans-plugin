@@ -1,29 +1,56 @@
 {% set snapToken = paymentMethod.getSnapToken(paymentMethod, invoice) %}
 {% set clientKey = paymentMethod.getClientKey(paymentMethod) %}
 
-<button class="btn btn-primary btn-lg" id="pay-button">Pay Now</button>
+<button class="btn btn-primary btn-lg" id="pay-button">PAY NOW</button>
 
-{% put scripts %}
 <!-- Snap pay -->
 <script src="{{ paymentMethod.getFormAction(paymentMethod) }}" data-client-key="{{ clientKey }}"></script>
 <script type="text/javascript">
-+function ($) { "use strict";
-    $(document).ready(function() {
-        $('#pay-button').on('click', function(){
-            snap.pay('{{ snapToken }}', {
+var payButton = document.getElementById('pay-button');
+
+payButton.addEventListener('click', processPayment);
+
+function processPayment() {
+    snap.show();
+
+    ajaxGetToken(function(error, snapToken){
+        if(error) {
+            snap.hide();
+            $.oc.flashMsg({ text: error, class: 'error' });
+        } else {
+            snap.pay(snapToken, {
                 onSuccess: function(result){
-                    window.location.replace(result.finish_redirect_url);
+                    redirectMe(result);
                 },
                 onPending: function(result){
-                    window.location.replace(result.finish_redirect_url);
+                    redirectMe(result);
                 },
                 onError: function(result){
-                    window.location.replace(result.finish_redirect_url);
+                    redirectMe(result);
                 }
             });
-        });
+        }
     });
-}(window.jQuery);
+};
+
+function ajaxGetToken(callback){
+    $.request('snapChannel::onGetToken', {
+        data: {
+            payment_code: '{{ paymentMethod.code }}',
+            invoice_hash: '{{ invoice.hash }}',
+        },
+        success: function(data) {
+            callback(null, data.token);
+        },
+        error: function(data) {
+            errorMsg = data.responseJSON.result;
+            callback(new Error(errorMsg),null);
+        }
+    });
+}
+
+function redirectMe(result) {
+    window.location.replace(result.finish_redirect_url);
+}
 </script>
 <!-- End of Snap pay -->
-{% endput %}
