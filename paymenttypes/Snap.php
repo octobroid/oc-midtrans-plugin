@@ -218,6 +218,15 @@ class Snap extends GatewayBase
 			$transactionStatus = $response['transaction_status'];
 			$paymentType = $response['payment_type'];
             $statusMessage = $response['status_message'];
+            $configData = $invoice->getPaymentMethod()->config_data;
+            $requestData = [
+                'expired_time' => $this->getExpiredTime($invoice, $configData)
+            ];
+
+            /**
+             * If payment has processed from Octommerce Order, don't change any status
+             **/
+            if ($invoice->related->isPaid()) return;
 
             switch ($transactionStatus) {
                 case 'capture':
@@ -229,7 +238,7 @@ class Snap extends GatewayBase
                             $invoice->updateInvoiceStatus($paymentMethod->invoice_challange_status);
                         } else {
                             if ($invoice->markAsPaymentProcessed()) {
-                                $invoice->logPaymentAttempt($statusMessage, 1, [], $response, null);
+                                $invoice->logPaymentAttempt($statusMessage, 1, $requestData, $response, null);
                                 $invoice->updateInvoiceStatus($paymentMethod->invoice_paid_status);
                             }
                         }
@@ -237,22 +246,27 @@ class Snap extends GatewayBase
                     break;
                 case 'settlement':
                     if ($invoice->markAsPaymentProcessed()) {
-                        $invoice->logPaymentAttempt($statusMessage, 1, [], $response, null);
+                        $invoice->logPaymentAttempt($statusMessage, 1, $requestData, $response, null);
                         $invoice->updateInvoiceStatus($paymentMethod->invoice_settlement_status);
                     }
                     break;
                 case 'pending':
+                    $invoice->logPaymentAttempt($statusMessage, 1, $requestData, $response, null);
                     $invoice->updateInvoiceStatus($paymentMethod->invoice_pending_status);
                     break;
                 case 'deny':
                 case 'cancel':
+                    $invoice->logPaymentAttempt($statusMessage, 0, $requestData, $response, null);
+                    $invoice->updateInvoiceStatus($paymentMethod->invoice_cancel_status);
+                    break;
                 case 'expire':
-                    $invoice->logPaymentAttempt($statusMessage, 0, [], $response, null);
+                    $invoice->logPaymentAttempt($statusMessage, 0, $requestData, $response, null);
+                    $invoice->updateInvoiceStatus($paymentMethod->invoice_expire_status);
                     break;
             }
         } catch (Exception $ex) {
             if (isset($invoice) && $invoice) {
-                $invoice->logPaymentAttempt($ex->getMessage(), 0, [], $_POST, null);
+                $invoice->logPaymentAttempt($ex->getMessage(), 0, $requestData, $_POST, null);
             }
 
             throw new ApplicationException($ex->getMessage());
@@ -311,4 +325,29 @@ class Snap extends GatewayBase
         return array_keys(array_flip($enabledPayments));
     }
 
+    /**
+     * Get expired time based on config data
+     *
+     * @param string $time
+     */
+    protected function getExpiredTime($invoice, $configData)
+    {
+        $unit = '';
+
+        switch ($configData['expiry_unit']) {
+            case 'minute':
+                $unit = 'addMinutes';
+                break;
+            case 'day':
+                $unit = 'addDays';
+                break;
+            case 'hour':
+                $unit = 'addHours';
+                break;
+        }
+
+        return $invoice->created_at
+            ->{$unit}($configData['expiry_duration'])
+            ->format('d F Y - H:i:s e');
+    }
 }
