@@ -154,7 +154,7 @@ class Snap extends GatewayBase
     /**
      * {@inheritDoc}
      */
-    public function processPaymentForm($data, $host, $invoice)
+    public function processPaymentForm($data, $invoice)
     {
     }
 
