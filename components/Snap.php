@@ -48,7 +48,7 @@ class Snap extends ComponentBase
 		// Required
         $totals = (object) $invoice->getTotalDetails();
 		$transactionDetails = array(
-			'order_id'     => rand(),
+			'order_id'     => $invoice->id,
 			'gross_amount' => (integer) $totals->total, // no decimal allowed for creditcard
 		);
 
