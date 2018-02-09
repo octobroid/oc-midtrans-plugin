@@ -1,5 +1,6 @@
 <?php namespace Octobro\Midtrans\Components;
 
+use Event;
 use Exception;
 use Veritrans_Snap;
 use Veritrans_Config;
@@ -47,7 +48,7 @@ class Snap extends ComponentBase
 		// Required
         $totals = (object) $invoice->getTotalDetails();
 		$transactionDetails = array(
-			'order_id'     => $invoice->id,
+			'order_id'     => rand(),
 			'gross_amount' => (integer) $totals->total, // no decimal allowed for creditcard
 		);
 
@@ -56,6 +57,11 @@ class Snap extends ComponentBase
 			"unit"       => (string) $host->expiry_unit,
 			"duration"   => (int) $host->expiry_duration
         );
+
+        /**
+         * Allow user to manipulate expiry by reference
+         **/
+        Event::fire('octobro.midtrans.afterSetExpiry', [$invoice, &$expiry]);
 
         $itemDetails = array_map(function($item) {
             return array(
