@@ -226,7 +226,9 @@ class Snap extends GatewayBase
             /**
              * If payment has processed from Octommerce Order, don't change any status
              **/
-            if ($invoice->related->isPaid()) return;
+            if ($invoice->related instanceof \Octommerce\Octommerce\Models\Order) {
+                if ($invoice->related->isPaid()) return;
+            }
 
             switch ($transactionStatus) {
                 case 'capture':
