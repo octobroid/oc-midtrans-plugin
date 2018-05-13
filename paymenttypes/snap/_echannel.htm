@@ -1,0 +1,35 @@
+<p class="lead">Silakan lakukan pembayaran dengan informasi berikut.</p>
+<table class="table table-hover table-bordered">
+    <tr>
+        <th>Kode Perusahaan</th>
+        <td class="lead text-danger"><strong>{{ biller_code }}</strong> (Midtrans)</td>
+    </tr>
+    <tr>
+        <th>Kode Pembayaran</th>
+        <td class="lead text-success"><strong>{{ bill_key }}</strong></td>
+    </tr>
+</table>
+
+<p>
+    <strong>ATM Mandiri</strong>
+    <ol>
+        <li>Pada menu utama, pilih Bayar/Beli.</li>
+        <li>Pilih Lainnya.</li>
+        <li>Pilih Multi Payment.</li>
+        <li>Masukkan 70012 (kode perusahaan Midtrans) lalu tekan Benar.</li>
+        <li>Masukkan Kode Pembayaran Anda lalu tekan Benar.</li>
+        <li>Pada halaman konfirmasi akan muncul detail pembayaran Anda. Jika informasi telah sesuai tekan Ya.</li>
+    </ol>
+</p>
+<p>
+    <strong>Internet Banking/Mandiri Online</strong>
+    <ol>
+        <li>Login ke Internet Banking Mandiri (https://ib.bankmandiri.co.id/).</li>
+        <li>Pada menu utama, pilih Bayar, lalu pilih Multi Payment.</li>
+        <li>Pilih akun Anda di Dari Rekening, kemudian di Penyedia Jasa pilih Midtrans.</li>
+        <li>Masukkan Kode Pembayaran Anda dan klik Lanjutkan.</li>
+        <li>Konfirmasi pembayaran Anda menggunakan Mandiri Token.</li>
+    </ol>
+</p>
+
+<a href="{{ instruction_link ?: 'https://app.sandbox.midtrans.com/snap/v1/transactions/a653e8cf-c6c8-4c36-bdb3-3d5f23abbe89/pdf' }}" class="btn btn-outline-primary">Download Instruksi</a>
