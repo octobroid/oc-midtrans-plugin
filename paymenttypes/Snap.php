@@ -315,6 +315,7 @@ class Snap extends GatewayBase
             'is_echannel'         => 'echannel',
             'is_cstore'           => 'cstore',
             'is_indomaret'        => 'Indomaret',
+            'is_gopay'            => 'gopay',
         ];
         $intersectChannels = array_intersect_key($host, $channels);
 
