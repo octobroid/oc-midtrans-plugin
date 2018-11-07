@@ -74,7 +74,7 @@ class Snap extends GatewayBase
     public function getFormAction($host)
     {
         if ($host->test_mode) {
-            return "https://app.sandbox.veritrans.co.id/snap/snap.js";
+            return "https://app.sandbox.midtrans.com/snap/snap.js";
         }
         else {
             return "https://app.midtrans.com/snap/snap.js";
