@@ -320,7 +320,7 @@ class Snap extends GatewayBase
         $intersectChannels = array_intersect_key($host, $channels);
 
         $enabledPayments = array_filter($intersectChannels, function($value) {
-            if ($value) return $value;
+            return $value;
         });
 
         $enabledPayments = array_intersect_key($channels, $enabledPayments);
