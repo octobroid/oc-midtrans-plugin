@@ -300,7 +300,7 @@ class Snap extends GatewayBase
         return $signature_key;
     }
 
-    protected function getEnabledPayments(array $host)
+    public function getEnabledPayments(array $host)
     {
         $channels = [
             'is_credit_card'      => 'credit_card',
