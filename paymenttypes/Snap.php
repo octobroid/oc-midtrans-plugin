@@ -130,7 +130,7 @@ class Snap extends GatewayBase
 			'phone'         => $customer['phone']
 		);
 
-		$enabledPayments = $this->getEnabledPayments($host->toArray());
+		$enabledPayments = $this->getEnabledPayments($host->toArray())->values();
 
 		// Fill transaction details
 		$transaction = array(
@@ -324,7 +324,7 @@ class Snap extends GatewayBase
 
         $enabledPayments = array_intersect_key($channels, $enabledPayments);
 
-        return array_keys(array_flip($enabledPayments));
+        return collect(array_keys(array_flip($enabledPayments)));
     }
 
     /**
