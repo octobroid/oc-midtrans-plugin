@@ -140,3 +140,7 @@ fields:
         label: Indomaret
         type: checkbox
         tab: Channels
+    is_gopay:
+        label: Gopay
+        type: checkbox
+        tab: Channels
