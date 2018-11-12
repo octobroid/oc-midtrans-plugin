@@ -253,7 +253,7 @@ class Snap extends GatewayBase
                     }
                     break;
                 case 'pending':
-                    $invoice->logPaymentAttempt($statusMessage, 1, $requestData, $response, null);
+                    $invoice->logPaymentAttempt($statusMessage, 0, $requestData, $response, null);
                     $invoice->updateInvoiceStatus($paymentMethod->invoice_pending_status);
                     break;
                 case 'deny':
