@@ -180,7 +180,7 @@ class Snap extends GatewayBase
         catch (Exception $ex)
         {
             if ($invoice) {
-                $invoice->logPaymentAttempt($ex->getMessage(), 0, [], $_GET, $response);
+                $invoice->logPaymentAttempt($ex->getMessage(), 0, [], $_GET, null);
             }
 
             throw new ApplicationException($ex->getMessage());
