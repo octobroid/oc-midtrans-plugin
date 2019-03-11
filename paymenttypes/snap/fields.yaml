@@ -96,6 +96,34 @@ fields:
         label: Credit card
         type: checkbox
         tab: Channels
+    is_bca_va:
+        label: BCA Virtual Account
+        type: checkbox
+        tab: Channels
+    is_permata_va:
+        label: Permata Virtual Account
+        type: checkbox
+        tab: Channels
+    is_bni_va:
+        label: BNI Virtual Account
+        type: checkbox
+        tab: Channels
+    is_echannel:
+        label: Mandiri Bill Payment
+        type: checkbox
+        tab: Channels
+    is_gopay:
+        label: GO-PAY
+        type: checkbox
+        tab: Channels
+    is_bca_klikbca:
+        label: KlikBCA
+        type: checkbox
+        tab: Channels
+    is_bca_klikpay:
+        label: BCA KlikPay 
+        type: checkbox
+        tab: Channels
     is_mandiri_clickpay:
         label: Mandiri Clickpay
         type: checkbox
@@ -104,43 +132,48 @@ fields:
         label: Cimb Click
         type: checkbox
         tab: Channels
+    is_danamon_online:
+        label: Danamon Online
+        type: checkbox
+        tab: Channels
     is_bri_epay:
         label: BRI Epay
-        type: checkbox
-        tab: Channels
-    is_telkomsel_cash:
-        label: Telkomsel Cash
-        type: checkbox
-        tab: Channels
-    is_xl_tunai:
-        label: XL Tunai
         type: checkbox
         tab: Channels
     is_mandiri_ecash:
         label: Mandiri E-Cash
         type: checkbox
         tab: Channels
-    is_indosat_dompetku:
-        label: Indosat Dompetku
-        type: checkbox
-        tab: Channels
-    is_bank_transfer:
-        label: Bank Transfer
-        type: checkbox
-        tab: Channels
-    is_echannel:
-        label: Echannel
-        type: checkbox
-        tab: Channels
-    is_cstore:
-        label: Cstore
-        type: checkbox
-        tab: Channels
     is_indomaret:
         label: Indomaret
         type: checkbox
         tab: Channels
-    is_gopay:
-        label: Gopay
+    is_alfamart:
+        label: Alfamart
         type: checkbox
         tab: Channels
+    is_akulaku:
+        label: Akulaku
+        type: checkbox
+        tab: Channels
+    # is_telkomsel_cash:
+    #     label: Telkomsel Cash
+    #     type: checkbox
+    #     tab: Channels
+    # is_xl_tunai:
+    #     label: XL Tunai
+    #     type: checkbox
+    #     tab: Channels
+    # is_indosat_dompetku:
+    #     label: Indosat Dompetku
+    #     type: checkbox
+    #     tab: Channels
+    # is_bank_transfer:
+    #     label: Bank Transfer
+    #     type: checkbox
+    #     tab: Channels
+    # is_cstore:
+    #     label: Cstore
+    #     type: checkbox
+    #     tab: Channels
+
