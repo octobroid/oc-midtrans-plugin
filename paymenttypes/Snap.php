@@ -319,11 +319,6 @@ class Snap extends GatewayBase
             'is_indomaret'        => 'indomaret',
             'is_alfamart'         => 'alfamart',
             'is_akulaku'          => 'akulaku',
-            // 'is_indosat_dompetku' => 'indosat_dompetku',
-            // 'is_telkomsel_cash'   => 'telkomsel_cash',
-            // 'is_xl_tunai'         => 'xl_tunai',
-            // 'is_bank_transfer'    => 'bank_transfer',
-            // 'is_cstore'           => 'cstore',
         ];
         $intersectChannels = array_intersect_key($host, $channels);
 

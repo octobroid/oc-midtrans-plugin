@@ -107,16 +107,21 @@ class Snap extends ComponentBase
     {
         $channels = [
             'is_credit_card'      => 'credit_card',
+            'is_bca_va'           => 'bca_va',
+            'is_permata_va'       => 'permata_va',
+            'is_bni_va'           => 'bni_va',
+            'is_echannel'         => 'echannel',
+            'is_gopay'            => 'gopay',
+            'is_bca_klikbca'      => 'bca_klikbca',
+            'is_bca_klikpay'      => 'bca_klikpay',
             'is_mandiri_clickpay' => 'mandiri_clickpay',
             'is_cimb_clicks'      => 'cimb_clicks',
+            'is_danamon_online'   => 'danamon_online',
             'is_bri_epay'         => 'bri_epay',
-            'is_telkomsel_cash'   => 'telkomsel_cash',
-            'is_xl_tunai'         => 'xl_tunai',
             'is_mandiri_ecash'    => 'mandiri_ecash',
-            'is_indosat_dompetku' => 'indosat_dompetku',
-            'is_bank_transfer'    => 'bank_transfer',
-            'is_echannel'         => 'echannel',
-            'is_cstore'           => 'cstore',
+            'is_indomaret'        => 'indomaret',
+            'is_alfamart'         => 'alfamart',
+            'is_akulaku'          => 'akulaku',
         ];
         $intersectChannels = array_intersect_key($host, $channels);
 

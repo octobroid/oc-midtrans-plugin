@@ -156,24 +156,3 @@ fields:
         label: Akulaku
         type: checkbox
         tab: Channels
-    # is_telkomsel_cash:
-    #     label: Telkomsel Cash
-    #     type: checkbox
-    #     tab: Channels
-    # is_xl_tunai:
-    #     label: XL Tunai
-    #     type: checkbox
-    #     tab: Channels
-    # is_indosat_dompetku:
-    #     label: Indosat Dompetku
-    #     type: checkbox
-    #     tab: Channels
-    # is_bank_transfer:
-    #     label: Bank Transfer
-    #     type: checkbox
-    #     tab: Channels
-    # is_cstore:
-    #     label: Cstore
-    #     type: checkbox
-    #     tab: Channels
-
