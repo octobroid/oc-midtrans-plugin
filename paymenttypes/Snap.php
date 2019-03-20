@@ -1,5 +1,6 @@
 <?php namespace Octobro\Midtrans\PaymentTypes;
 
+use Twig;
 use Input;
 use Flash;
 use Redirect;
@@ -93,6 +94,9 @@ class Snap extends GatewayBase
 
     public function getSnapToken($host, $invoice)
     {
+        // If already paid or utilized, don't get token
+        if ($invoice->status->code != 'draft') return;
+
 		// Veritrans config
 		Veritrans_Config::$serverKey = $host->server_key;
 		Veritrans_Config::$isProduction = $host->test_mode ? false : true;
@@ -112,14 +116,14 @@ class Snap extends GatewayBase
 			"duration"   => (int) $host->expiry_duration
         );
 
-        $itemDetails = array_map(function($item) {
-            return array(
-                'id'       => rand(), // TODO: Get the item's ID
-                'price'    => (integer) $item['price'],
-                'quantity' => $item['quantity'],
-                'name'     => $item['description']
-            );
-        }, $invoice->getLineItemDetails());
+        $itemDetails = $invoice->items->map(function ($item) {
+            return [
+                'id'       => $item->id,
+                'price'    => (integer) $item->price,
+                'quantity' => $item->quantity,
+                'name'     => $item->description,
+            ];
+        })->toArray();
 
 		// Optional
         $customer = $invoice->getCustomerDetails();
@@ -138,7 +142,7 @@ class Snap extends GatewayBase
 			'transaction_details' => $transactionDetails,
 			'expiry'              => $expiry,
 			'customer_details'    => $customerDetails,
-			/* 'item_details'        => $itemDetails, */
+			'item_details'        => $itemDetails,
 		);
 
         try {
@@ -166,16 +170,26 @@ class Snap extends GatewayBase
                 throw new ApplicationException('Invoice not found');
             }
 
-            return Redirect::to($invoice->getReceiptUrl());
+            $status = array_get($params, 0);
+
+            $invoice->setUrlPageName('account/payment');
 
             //
             // If wanna specialize the return type
             //
-            // switch($params) {
-            //     case 'finish':
-            //     case 'unfinish':
-            //     case 'error':
-            // }
+            switch ($status) {
+                case 'finish':
+                    if (get('transaction_status') == 'pending') {
+                        return Redirect::to($invoice->url);
+                    }
+                    return Redirect::to($invoice->getReceiptUrl())->with('success', true);
+                case 'unfinish':
+                    return Redirect::to($invoice->url);
+                case 'error':
+                    return Redirect::to($invoice->getReceiptUrl())->with('error', true);
+            }
+
+            return Redirect::to($invoice->getReceiptUrl());
         }
         catch (Exception $ex)
         {
@@ -191,8 +205,9 @@ class Snap extends GatewayBase
     {
         try {
 			$response = Input::all();
-            $orderId = $response['order_id'];
-            $amount = $response['gross_amount'];
+
+            $orderId = Input::get('order_id');
+            $amount  = Input::get('gross_amount');
 
             $invoice = $this->createInvoiceModel()
                 ->whereTotal($amount)
@@ -212,14 +227,17 @@ class Snap extends GatewayBase
             }
 
             if (! $this->isGenuineNotify($response, $invoice)) {
-                throw new ApplicationException('Hacker coming..');
+                throw new ApplicationException('Hacker coming');
             }
 
-			$transactionStatus = $response['transaction_status'];
-			$paymentType = $response['payment_type'];
-            $statusMessage = $response['status_message'];
-            $configData = $invoice->getPaymentMethod()->config_data;
-            $requestData = [
+			$transactionStatus = Input::get('transaction_status');
+            $statusCode        = Input::get('status_code');
+            $fraudStatus       = Input::get('fraud_status');
+			$paymentType       = Input::get('payment_type');
+            $statusMessage     = Input::get('status_message');
+
+            $configData        = $invoice->getPaymentMethod()->config_data;
+            $requestData       = [
                 'expired_time' => $this->getExpiredTime($invoice, $configData)
             ];
 
@@ -230,48 +248,40 @@ class Snap extends GatewayBase
                 if ($invoice->related->isPaid()) return;
             }
 
-            switch ($transactionStatus) {
-                case 'capture':
-                    if ($paymentType == 'credit_card') {
+            /**
+             * Perform based on status code
+             * https://snap-docs.midtrans.com/#status-code
+             */
+            switch ($statusCode) {
+                case 200: // Success
+                    if ($fraudStatus != 'accept') break;
+                    if ($transactionStatus != 'settlement' || $transactionStatus != 'capture') break;
 
-                        $fraudStatus = $response['fraud_status'];
-
-                        if ($fraudStatus == 'challenge') {
-                            $invoice->updateInvoiceStatus($paymentMethod->invoice_challange_status);
-                        } else {
-                            if ($invoice->markAsPaymentProcessed()) {
-                                $invoice->logPaymentAttempt($statusMessage, 1, $requestData, $response, null);
-                                $invoice->updateInvoiceStatus($paymentMethod->invoice_paid_status);
-                            }
-                        }
-                    }
-                    break;
-                case 'settlement':
                     if ($invoice->markAsPaymentProcessed()) {
-                        $invoice->logPaymentAttempt($statusMessage, 1, $requestData, $response, null);
-                        $invoice->updateInvoiceStatus($paymentMethod->invoice_settlement_status);
+                        $invoice->logPaymentAttempt($transactionStatus, 1, $requestData, $response, null);
+                        $invoice->updateInvoiceStatus($paymentMethod->invoice_paid_status);
                     }
                     break;
-                case 'pending':
-                    $invoice->logPaymentAttempt($statusMessage, 0, $requestData, $response, null);
+                case 201: // Challenge or Pending
+                    $invoice->logPaymentAttempt($transactionStatus, 0, $requestData, $response, null);
                     $invoice->updateInvoiceStatus($paymentMethod->invoice_pending_status);
                     break;
-                case 'deny':
-                case 'cancel':
-                    $invoice->logPaymentAttempt($statusMessage, 0, $requestData, $response, null);
+                case 202: // Denied or Expired
+                    $invoice->logPaymentAttempt($transactionStatus, 0, $requestData, $response, null);
                     $invoice->updateInvoiceStatus($paymentMethod->invoice_cancel_status);
                     break;
-                case 'expire':
-                    $invoice->logPaymentAttempt($statusMessage, 0, $requestData, $response, null);
-                    $invoice->updateInvoiceStatus($paymentMethod->invoice_expire_status);
+                case substr($statusCode, 0, 1) == 3: // 3xx: Moved Permanently 
+                case substr($statusCode, 0, 1) == 4: // 4xx: Validation Error, Expired, or Missing
+                case substr($statusCode, 0, 1) == 5: // 5xx: Internal Server Error
+                    $invoice->logPaymentAttempt($statusCode, 0, $requestData, $response, null);
                     break;
             }
         } catch (Exception $ex) {
             if (isset($invoice) && $invoice) {
-                $invoice->logPaymentAttempt($ex->getMessage(), 0, $requestData, $_POST, null);
+                $invoice->logPaymentAttempt($ex->getMessage(), 0, $requestData, $response, null);
             }
 
-            throw new ApplicationException($ex->getMessage());
+            throw $ex;
         }
     }
 
@@ -279,19 +289,62 @@ class Snap extends GatewayBase
     {
        $generatedSignatureKey = $this->generateSignatureKey($response, $invoice);
 
-       if ($response['signature_key'] == $generatedSignatureKey) {
+       if (array_get($response, 'signature_key') == $generatedSignatureKey) {
            return true;
        }
 
        return false;
     }
 
+    public function getPaymentInstructions($invoice)
+    {
+        $paymentData = $this->getInvoicePaymentData($invoice);
+
+        return Twig::parse(file_get_contents(plugins_path('octobro/midtrans/paymenttypes/snap/_' . $paymentData['payment_type'] . '.htm')), $paymentData);
+    }
+
+    protected function getInvoicePaymentData($invoice)
+    {
+        $logs = $invoice->payment_log()
+            ->whereIsSuccess(1)
+            ->get();
+
+        $data = [];
+
+        foreach ($logs as $log) {
+            $responseData = $log->response_data;
+            $paymentType = $data['payment_type'] = array_get($responseData, 'payment_type') ?: array_get($data, 'payment_type');
+            $data['gross_amount'] = array_get($responseData, 'gross_amount') ?: array_get($data, 'gross_amount');
+        }
+
+        switch (array_get($data, 'payment_type')) {
+            case 'bank_transfer':
+                if (isset($responseData['va_numbers'])) {
+                    $data['bank']   = array_get($responseData['va_numbers'][0], 'bank');
+                    $data['acc_no'] = array_get($responseData['va_numbers'][0], 'va_number');
+                }
+
+                if (isset($responseData['permata_va_number'])) {
+                    $data['bank']   = 'permata';
+                    $data['acc_no'] = $responseData['permata_va_number'];
+                }
+
+                break;
+            case 'echannel':
+                $data['biller_code'] = array_get($responseData, 'biller_code');
+                $data['bill_key']    = array_get($responseData, 'bill_key');
+                break;
+        }
+
+        return $data;
+    }
+
     protected function generateSignatureKey($response, $invoice)
     {
-        $orderId = $response['order_id'];
-        $statusCode = $response['status_code'];
-        $grossAmount = $response['gross_amount'];
-        $serverKey = $invoice->getPaymentMethod()->server_key;
+        $orderId     = array_get($response, 'order_id');
+        $statusCode  = array_get($response, 'status_code');
+        $grossAmount = array_get($response, 'gross_amount');
+        $serverKey   = $invoice->getPaymentMethod()->server_key;
 
         $data = $orderId . $statusCode . $grossAmount . $serverKey;
 

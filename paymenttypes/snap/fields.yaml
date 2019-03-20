@@ -21,6 +21,7 @@ fields:
     expiry_duration:
         label: Expiry time (Duration)
         type: number
+        default: 1
         span: right
         tab: Configuration
 
@@ -31,6 +32,7 @@ fields:
             day: Day(s)
             hour: Hour(s)
             minute: Minute(s)
+        default: day
         span: right
         tab: Configuration
 
@@ -49,13 +51,6 @@ fields:
         tab: Configuration
         comment: Use 3D-Secure authentication when using credit card
 
-    server_key:
-        label: Server Key
-        comment: You can find your Server keys on your Veritrans dashboard in Account Setting > Access Keys section.
-        required: true
-        span: auto
-        tab: Configuration
-
     client_key:
         label: Client Key
         comment: You can find your Client keys on your Veritrans dashboard in Account Setting > Access Keys section.
@@ -63,9 +58,17 @@ fields:
         span: auto
         tab: Configuration
 
+    server_key:
+        label: Server Key
+        comment: You can find your Server keys on your Veritrans dashboard in Account Setting > Access Keys section.
+        required: true
+        span: auto
+        tab: Configuration
+
     invoice_paid_status:
         label: Invoice paid status
         comment: Select status to assign the invoice in case of successful payment.
+        default: paid
         tab: Configuration
         span: auto
         type: dropdown
@@ -80,6 +83,7 @@ fields:
     invoice_challange_status:
         label: Invoice challange status
         comment: Select status to assign the invoice in case of challange payment.
+        default: approved
         tab: Configuration
         span: auto
         type: dropdown
@@ -87,6 +91,7 @@ fields:
     invoice_pending_status:
         label: Invoice pending status
         comment: Select status to assign the invoice in case of pending payment.
+        default: approved
         tab: Configuration
         span: auto
         type: dropdown
