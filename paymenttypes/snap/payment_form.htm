@@ -1,6 +1,5 @@
 {% set snapToken = paymentMethod.getSnapToken(paymentMethod, invoice) %}
 {% set clientKey = paymentMethod.getClientKey(paymentMethod) %}
-{% set enabledPayments = paymentMethod.getEnabledPayments(paymentMethod.toArray()).values() %}
 
 <button class="btn btn-primary btn-lg" id="pay-button">PAY NOW</button>
 
@@ -29,9 +28,7 @@ function processPayment() {
                 onError: function(result){
                     redirectMe(result);
                 },
-                {% if 'gopay' in enabledPayments %}
-                enabledPayments: ["gopay"]
-                {% endif %}
+                skipOrderSummary: true,
             });
         }
     });
