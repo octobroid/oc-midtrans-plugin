@@ -5,9 +5,11 @@ use Input;
 use Flash;
 use Redirect;
 use Exception;
+use Carbon\Carbon;
 use Veritrans_Snap;
 use Veritrans_Config;
 use ApplicationException;
+use Responsiv\Pay\Models\InvoiceLog;
 use Responsiv\Pay\Classes\GatewayBase;
 
 class Snap extends GatewayBase
@@ -165,14 +167,19 @@ class Snap extends GatewayBase
     public function processRedirect($params)
     {
         try {
-            $invoice = $this->createInvoiceModel()->find(get('order_id'));
+            $invoice = get('order_id') ? $this->createInvoiceModel()->find(get('order_id')) : null;
+
+            if (!$invoice && get('id')) {
+                $log = InvoiceLog::where('response_data', 'like', '%"transaction_id":"' . get('id') . '"%')->where('created_at', '>=', Carbon::now()->subHours(1))->first();
+
+                if ($log) $invoice = $this->createInvoiceModel()->find($log->invoice_id);
+            }
+
             if (!$invoice) {
                 throw new ApplicationException('Invoice not found');
             }
 
             $status = array_get($params, 0);
-
-            $invoice->setUrlPageName('account/payment');
 
             //
             // If wanna specialize the return type
@@ -180,13 +187,13 @@ class Snap extends GatewayBase
             switch ($status) {
                 case 'finish':
                     if (get('transaction_status') == 'pending') {
-                        return Redirect::to($invoice->url);
+                        return Redirect::to($invoice->getReceiptUrl());
                     }
                     return Redirect::to($invoice->getReceiptUrl())->with('success', true);
-                case 'unfinish':
-                    return Redirect::to($invoice->url);
                 case 'error':
                     return Redirect::to($invoice->getReceiptUrl())->with('error', true);
+                case 'unfinish':
+                    return Redirect::to($invoice->getReceiptUrl());
             }
 
             return Redirect::to($invoice->getReceiptUrl());
