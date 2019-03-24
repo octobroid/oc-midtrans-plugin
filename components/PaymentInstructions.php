@@ -17,11 +17,7 @@ class PaymentInstructions extends ComponentBase
 
     public function defineProperties()
     {
-        return [
-            'invoice' => [
-                'label' => 'Invoice',
-            ]
-        ];
+        return [];
     }
 
     public function onRun()
