@@ -1,0 +1,140 @@
+<p class="lead">Silakan lakukan transfer ke rekening berikut.</p>
+{% set bankList = {
+    bca: 'Bank Central Asia',
+    bni: 'BNI 46',
+    permata: 'Bank Permata',
+} %}
+<table class="table table-hover table-bordered">
+    <tr>
+        <th>Bank</th>
+        <td>
+            {{ bankList[data.bank] }}
+        </td>
+    </tr>
+    <tr>
+        <th>No. Rekening</th>
+        <td class="lead text-danger"><strong>{{ data.acc_no }}</strong></td>
+    </tr>
+    <tr>
+        <th>Jumlah Transfer</th>
+        <td class="lead text-success"><strong>Rp {{ data.gross_amount|number_format }}</strong></td>
+    </tr>
+</table>
+
+{% if data.bank == 'bca' %}
+<p>
+    <strong>Melalui ATM BCA</strong>
+    <ol>
+        <li>Pada menu utama, pilih <strong>Transaksi Lainnya</strong>.</li>
+        <li>Pilih <strong>Transfer</strong>.</li>
+        <li>Pilih <strong>Ke Rek BCA Virtual Account</strong>.</li>
+        <li>Masukkan <strong>Nomor Rekening</strong> pembayaran <strong class="text-danger">{{ data.acc_no }}</strong> Anda lalu tekan <strong>Benar</strong>.</li>
+        <li>Masukkan jumlah tagihan yang akan anda bayar (<strong class="text-success">Rp {{ data.gross_amount|number_format }}</strong>).</li>
+        <li>Pada halaman konfirmasi transfer akan muncul detail pembayaran Anda. Jika informasi telah sesuai tekan <strong>Ya</strong>.</li>
+    </ol>
+</p>
+<p>
+    <strong>Melalui Klik BCA</strong>
+    <ol>
+        <li>Pilih menu Transfer Dana.</li>
+        <li>Pilih Transfer ke BCA Virtual Account.</li>
+        <li>Masukkan nomor BCA Virtual Account <strong class="text-danger">{{ data.acc_no }}</strong>, atau pilih Dari Daftar Transfer.</li>
+        <li>Jumlah yang akan ditransfer (<strong class="text-success">Rp {{ data.gross_amount|number_format }}</strong>), nomor rekening dan nama merchant akan muncul di halaman konfirmasi pembayaran, jika informasi benar klik Lanjutkan.</li>
+        <li>Ambil BCA Token Anda dan masukkan KEYBCA Response APPLI 1 dan Klik Submit.</li>
+        <li>Transaksi Anda selesai.</li>
+    </ol>
+</p>
+<p>
+    <strong>Melalui m-BCA</strong>
+    <ol>
+        <li>Lakukan log in pada aplikasi BCA Mobile.</li>
+        <li>Pilih menu m-BCA, kemudian masukkan kode akses m-BCA.</li>
+        <li>Pilih m-Transfer > BCA Virtual Account.</li>
+        <li>Masukkan Nomor Virtual Account tujuan <strong class="text-danger">{{ data.acc_no }}</strong>.</li>
+        <li>Masukkan jumlah yang ingin dibayarkan (<strong class="text-success">Rp {{ data.gross_amount|number_format }}</strong>).</li>
+        <li>Masukkan pin m-BCA.</li>
+        <li>Pembayaran selesai. Simpan notifikasi yang muncul sebagai bukti pembayaran.</li>
+    </ol>
+</p>
+{% endif %}
+
+{% if data.bank == 'bni' %}
+<p>
+    <strong>Melalui ATM BNI</strong>
+    <ol>
+        <li>Pada menu utama, pilih <strong>Menu Lainnya</strong>.</li>
+        <li>Pilih <strong>Transfer</strong>.</li>
+        <li>Pilih <strong>Rekening Tabungan</strong>.</li>
+        <li>Pilih <strong>Ke Rekening BNI</strong>.</li>
+        <li>Masukkan nomor virtual account <strong class="text-danger">{{ data.acc_no }}</strong> dan pilih <strong>Tekan Jika Benar</strong>.</li>
+        <li>Masukkan jumlah tagihan yang akan anda bayar secara lengkap (<strong class="text-success">Rp {{ data.gross_amount|number_format }}</strong>). Pembayaran dengan jumlah tidak sesuai akan otomatis ditolak.</li>
+        <li>Jumlah yang dibayarkan, nomor rekening dan nama Merchant akan ditampilkan. Jika informasi telah sesuai, tekan <strog>Ya</strog>.</li>
+    </ol>
+</p>
+<p>
+    <strong>Melalui Internet Banking</strong>
+    <ol>
+
+        <li>Ketik alamat <a href="https://ibank.bni.co.id" target="_blank">https://ibank.bni.co.id</a> kemudian klik <strong>Masuk</strong>.</li>
+        <li>Silakan masukkan <strong>User ID</strong> dan <strong>Password</strong>.</li>
+        <li>Klik menu <strong>Transfer</strong> kemudian pilih <strong>Tambah Rekening Favorit</strong>.</li>
+        <li>Masukkan nama, nomor rekening, dan email, lalu klik <strong>Lanjut</strong>.</li>
+        <li>Masukkan <strong>Kode Otentikasi</strong> dari token Anda dan klik <strong>Lanjut</strong>.</li>
+        <li>Kembali ke menu utama dan pilih <strong>Transfer</strong> lalu <strong>Transfer Antar Rekening BNI</strong>.</li>
+        <li>Pilih rekening yang telah Anda favoritkan sebelumnya di <strong>Rekening Tujuan</strong> lalu lanjutkan pengisian, dan tekan <strong>Lanjut</strong>.</li>
+        <li>Pastikan detail transaksi Anda benar, lalu masukkan <strong>Kode Otentikasi</strong> dan tekan <strong>Lanjut</strong>.</li>
+    </ol>
+</p>
+<p>
+    <strong>Melalui Mobile Banking</strong>
+    <ol>
+        <li>Buka aplikasi BNI Mobile Banking dan login.</li>
+        <li>Pilih menu Transfer.</li>
+        <li>Pilih menu Virtual Account Billing.</li>
+        <li>Pilih rekening debit yang akan digunakan.</li>
+        <li>Pilih menu Input Baru dan masukkan 16 digit nomor Virtual Account <strong class="text-danger">{{ data.acc_no }}</strong>.</li>
+        <li>Informasi tagihan akan muncul pada halaman validasi.</li>
+        <li>Jika informasi telah sesuai, masukkan Password Transaksi dan klik Lanjut.</li>
+        <li>Transaksi Anda akan diproses.</li>
+    </ol>
+</p>
+{% endif %}
+
+{% if bank == 'permata' %}
+<p>
+    <strong>Prima</strong>
+    <ol>
+        <li>Pada menu utama, pilih Transaksi Lainnya.</li>
+        <li>Pilih Transfer.</li>
+        <li>Pilih Rek Bank Lain.</li>
+        <li>Masukkan nomor 013 (kode Bank Permata) lalu tekan Benar.</li>
+        <li>Masukkan jumlah tagihan yang akan Anda bayar secara lengkap, pembayaran dengan jumlah tidak sesuai akan otomatis ditolak.</li>
+        <li>Masukkan 16 digit No. Rekening pembayaran lalu tekan Benar.</li>
+        <li>Pada halaman konfirmasi transfer akan muncul jumlah yang dibayarkan, nomor rekening dan nama Merchant. Jika informasi telah sesuai tekan Benar.</li>
+    </ol>
+</p>
+<p>
+    <strong>ATM Bersama</strong>
+    <ol>
+        <li>Pada menu utama, pilih Transaksi Lainnya.</li>
+        <li>Pilih Transfer.</li>
+        <li>Pilih Antar Bank Online.</li>
+        <li>Masukkan 013 dan 16 digit No. Rekening.</li>
+        <li>Masukkan jumlah tagihan yang akan Anda bayar secara lengkap, Pembayaran dengan jumlah tidak sesuai akan otomatis ditolak.</li>
+        <li>Kosongkan No. Referensi, lalu tekan Benar.</li>
+        <li>Pada halaman konfirmasi transfer akan muncul jumlah yang dibayarkan, nomor rekening dan nama Merchant. Jika informasi telah sesuai tekan Benar.</li>
+    </ol>
+</p>
+<p>
+    <strong>Alto</strong>
+    <ol>
+        <li>Pada menu utama, pilih Transaksi Lainnya.</li>
+        <li>Pilih Transaksi Pembayaran.</li>
+        <li>Pilih Lain-lain.</li>
+        <li>Pilih Pembayaran Virtual Account.</li>
+        <li>Masukkan 16 digit No. Rekening pembayaran lalu tekan Benar.</li>
+        <li>Pada halaman konfirmasi transfer akan muncul jumlah yang dibayarkan, nomor rekening dan nama Merchant. Jika informasi telah sesuai tekan Benar.</li>
+        <li>Pilih rekening pembayaran Anda dan tekan Benar.</li>
+    </ol>
+</p>
+{% endif %}

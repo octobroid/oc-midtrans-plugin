@@ -47,6 +47,7 @@ class Plugin extends PluginBase
     {
         return [
             'Octobro\Midtrans\Components\Snap' => 'snapChannel',
+            'Octobro\Midtrans\Components\PaymentInstructions' => 'snapPaymentInstructions'
         ];
     }
 }

@@ -1,0 +1,3 @@
+{% if invoice.status.code == 'approved' and __SELF__.paymentChannel and partial(__SELF__ ~ '::_' ~ __SELF__.paymentChannel) %}
+    {% partial __SELF__ ~ '::_' ~ __SELF__.paymentChannel data=__SELF__.paymentData %}
+{% endif %}

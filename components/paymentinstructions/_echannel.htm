@@ -2,11 +2,11 @@
 <table class="table table-hover table-bordered">
     <tr>
         <th>Kode Perusahaan</th>
-        <td class="lead text-danger"><strong>{{ biller_code }}</strong> (Midtrans)</td>
+        <td class="lead text-danger"><strong>{{ data.biller_code }}</strong> (Midtrans)</td>
     </tr>
     <tr>
         <th>Kode Pembayaran</th>
-        <td class="lead text-success"><strong>{{ bill_key }}</strong></td>
+        <td class="lead text-success"><strong>{{ data.bill_key }}</strong></td>
     </tr>
 </table>
 
@@ -31,5 +31,3 @@
         <li>Konfirmasi pembayaran Anda menggunakan Mandiri Token.</li>
     </ol>
 </p>
-
-<a href="{{ instruction_link ?: 'https://app.sandbox.midtrans.com/snap/v1/transactions/a653e8cf-c6c8-4c36-bdb3-3d5f23abbe89/pdf' }}" class="btn btn-outline-primary">Download Instruksi</a>

@@ -303,49 +303,6 @@ class Snap extends GatewayBase
        return false;
     }
 
-    public function getPaymentInstructions($invoice)
-    {
-        $paymentData = $this->getInvoicePaymentData($invoice);
-
-        return Twig::parse(file_get_contents(plugins_path('octobro/midtrans/paymenttypes/snap/_' . $paymentData['payment_type'] . '.htm')), $paymentData);
-    }
-
-    protected function getInvoicePaymentData($invoice)
-    {
-        $logs = $invoice->payment_log()
-            ->whereIsSuccess(1)
-            ->get();
-
-        $data = [];
-
-        foreach ($logs as $log) {
-            $responseData = $log->response_data;
-            $paymentType = $data['payment_type'] = array_get($responseData, 'payment_type') ?: array_get($data, 'payment_type');
-            $data['gross_amount'] = array_get($responseData, 'gross_amount') ?: array_get($data, 'gross_amount');
-        }
-
-        switch (array_get($data, 'payment_type')) {
-            case 'bank_transfer':
-                if (isset($responseData['va_numbers'])) {
-                    $data['bank']   = array_get($responseData['va_numbers'][0], 'bank');
-                    $data['acc_no'] = array_get($responseData['va_numbers'][0], 'va_number');
-                }
-
-                if (isset($responseData['permata_va_number'])) {
-                    $data['bank']   = 'permata';
-                    $data['acc_no'] = $responseData['permata_va_number'];
-                }
-
-                break;
-            case 'echannel':
-                $data['biller_code'] = array_get($responseData, 'biller_code');
-                $data['bill_key']    = array_get($responseData, 'bill_key');
-                break;
-        }
-
-        return $data;
-    }
-
     protected function generateSignatureKey($response, $invoice)
     {
         $orderId     = array_get($response, 'order_id');
