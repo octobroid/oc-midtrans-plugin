@@ -66,6 +66,7 @@ fields:
     invoice_paid_status:
         label: Invoice paid status
         comment: Select status to assign the invoice in case of successful payment.
+        default: paid
         tab: Configuration
         span: auto
         type: dropdown
@@ -73,6 +74,7 @@ fields:
     invoice_settlement_status:
         label: Invoice settlement status
         comment: Select status to assign the invoice in case of settlement payment.
+        default: paid
         tab: Configuration
         span: auto
         type: dropdown
@@ -80,6 +82,7 @@ fields:
     invoice_challange_status:
         label: Invoice challange status
         comment: Select status to assign the invoice in case of challange payment.
+        default: approved
         tab: Configuration
         span: auto
         type: dropdown
@@ -87,9 +90,26 @@ fields:
     invoice_pending_status:
         label: Invoice pending status
         comment: Select status to assign the invoice in case of pending payment.
+        default: approved
         tab: Configuration
         span: auto
         type: dropdown
+
+    invoice_cancel_status:
+        label: Invoice cancel status
+        comment: Select status to assign the invoice in case of canceled payment.
+        default: void
+        tab: Configuration
+        span: auto
+        type: dropdown
+
+    invoice_expire_status:
+        label: Invoice expire status
+        comment: Select status to assign the invoice in case of expired payment.
+        default: void
+        tab: Configuration
+        span: auto
+        type: dropdown        
 
     # Channels
     is_credit_card:
