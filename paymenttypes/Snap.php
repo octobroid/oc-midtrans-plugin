@@ -261,7 +261,7 @@ class Snap extends GatewayBase
              */
             switch ($statusCode) {
                 case 200: // Success
-                    if ($fraudStatus != 'accept' || $transactionStatus != 'settlement' && $transactionStatus != 'capture') {
+                    if ($fraudStatus != 'accept' && $transactionStatus != 'settlement' && $transactionStatus != 'capture') {
                         $invoice->logPaymentAttempt($transactionStatus, 0, $requestData, $response, null);
                         break;
                     }
