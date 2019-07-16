@@ -350,6 +350,20 @@ class Snap extends GatewayBase
         return collect(array_keys(array_flip($enabledPayments)));
     }
 
+    public function getPaymentInstructions($invoice)
+    {
+        $paymentData = $this->getInvoicePaymentData($invoice);
+        $paymentChannel = is_array($paymentData) ? array_get($paymentData, 'payment_type') : null;
+
+        if (!$paymentChannel) return;
+
+        $partialPath = plugins_path('octobro/midtrans/paymenttypes/snap/_' . $paymentChannel . '.htm');
+
+        if (!file_exists($partialPath)) return;
+
+        return Twig::parse(file_get_contents($partialPath), ['data' => $paymentData]);
+    }
+
     /**
      * Get expired time based on config data
      *
@@ -374,5 +388,40 @@ class Snap extends GatewayBase
         return $invoice->created_at
             ->{$unit}($configData['expiry_duration'])
             ->format('d F Y - H:i:s e');
+    }
+
+    protected function getInvoicePaymentData($invoice)
+    {
+        $logs = $invoice->payment_log()
+            ->get();
+
+        $data = [];
+
+        foreach ($logs as $log) {
+            $responseData = $log->response_data;
+            $paymentType = $data['payment_type'] = array_get($responseData, 'payment_type') ?: array_get($data, 'payment_type');
+            $data['gross_amount'] = array_get($responseData, 'gross_amount') ?: array_get($data, 'gross_amount');
+        }
+
+        switch (array_get($data, 'payment_type')) {
+            case 'bank_transfer':
+                if (isset($responseData['va_numbers'])) {
+                    $data['bank']   = array_get($responseData['va_numbers'][0], 'bank');
+                    $data['acc_no'] = array_get($responseData['va_numbers'][0], 'va_number');
+                }
+
+                if (isset($responseData['permata_va_number'])) {
+                    $data['bank']   = 'permata';
+                    $data['acc_no'] = $responseData['permata_va_number'];
+                }
+
+                break;
+            case 'echannel':
+                $data['biller_code'] = array_get($responseData, 'biller_code');
+                $data['bill_key']    = array_get($responseData, 'bill_key');
+                break;
+        }
+
+        return $data;
     }
 }
