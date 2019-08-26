@@ -287,7 +287,7 @@ class Snap extends GatewayBase
             }
         } catch (Exception $ex) {
             if (isset($invoice) && $invoice) {
-                $invoice->logPaymentAttempt($ex->getMessage(), 0, $requestData, $response, null);
+                $invoice->logPaymentAttempt($ex->getMessage(), 0, [], $_GET, null);
             }
 
             throw $ex;
