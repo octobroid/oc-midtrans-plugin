@@ -112,11 +112,19 @@ class Snap extends GatewayBase
 			'gross_amount' => (integer) $totals->total, // no decimal allowed for creditcard
 		);
 
-        $expiry = array(
-			"start_time" => $invoice->created_at->format('Y-m-d H:i:s O'),
-			"unit"       => (string) $host->expiry_unit,
-			"duration"   => (int) $host->expiry_duration
-        );
+        if ($invoice->due_at) {
+            $expiry = array(
+                "start_time" => $invoice->created_at->format('Y-m-d H:i:s O'),
+                "unit"       => 'minute',
+                "duration"   => $invoice->created_at->diffInMinutes($invoice->due_at),
+            );
+        } else {
+            $expiry = array(
+                "start_time" => Carbon::now()->format('Y-m-d H:i:s O'),
+                "unit"       => (string) $host->expiry_unit,
+                "duration"   => (int) $host->expiry_duration
+            );
+        }
 
         $itemDetails = $invoice->items->map(function ($item) {
             return [
