@@ -245,6 +245,7 @@ class Snap extends GatewayBase
                 throw new ApplicationException('Hacker coming');
             }
 
+            $transactionTime   = Input::get('transaction_time');
 			$transactionStatus = Input::get('transaction_status');
             $statusCode        = Input::get('status_code');
             $fraudStatus       = Input::get('fraud_status');
@@ -282,6 +283,27 @@ class Snap extends GatewayBase
                 case 201: // Challenge or Pending
                     $invoice->logPaymentAttempt($transactionStatus, 0, $requestData, $response, null);
                     $invoice->updateInvoiceStatus($paymentMethod->invoice_pending_status);
+
+                    // Check if due at is not available
+                    if ($invoice->due_at) {
+                        $unit = '';
+
+                        switch ($configData['expiry_unit']) {
+                            case 'minute':
+                                $unit = 'addMinutes';
+                                break;
+                            case 'day':
+                                $unit = 'addDays';
+                                break;
+                            case 'hour':
+                                $unit = 'addHours';
+                                break;
+                        }
+                
+                        $invoice->due_at = Carbon::parse($transactionTime)->{$unit}($configData['expiry_duration']);
+                        $invoice->save();
+                    }
+
                     break;
                 case 202: // Denied or Expired
                     $invoice->logPaymentAttempt($transactionStatus, 0, $requestData, $response, null);
