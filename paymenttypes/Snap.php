@@ -285,7 +285,7 @@ class Snap extends GatewayBase
                     $invoice->updateInvoiceStatus($paymentMethod->invoice_pending_status);
 
                     // Check if due at is not available
-                    if ($invoice->due_at) {
+                    if (!$invoice->due_at) {
                         $unit = '';
 
                         switch ($configData['expiry_unit']) {
