@@ -73,13 +73,6 @@ fields:
         span: auto
         type: dropdown
 
-    invoice_settlement_status:
-        label: Invoice settlement status
-        comment: Select status to assign the invoice in case of settlement payment.
-        tab: Configuration
-        span: auto
-        type: dropdown
-
     invoice_challange_status:
         label: Invoice challange status
         comment: Select status to assign the invoice in case of challange payment.
@@ -92,6 +85,14 @@ fields:
         label: Invoice pending status
         comment: Select status to assign the invoice in case of pending payment.
         default: approved
+        tab: Configuration
+        span: auto
+        type: dropdown
+
+    invoice_cancel_status:
+        label: Invoice cancel status
+        comment: Select status to assign the invoice in case of canceled payment.
+        default: void
         tab: Configuration
         span: auto
         type: dropdown
