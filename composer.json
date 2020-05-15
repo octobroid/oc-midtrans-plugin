@@ -6,6 +6,6 @@
     "keywords": ["october", "octobercms", "payment", "midtrans", "veritrans", "indonesia", "laravel"],
     "license": "MIT",
     "require": {
-        "veritrans/veritrans-php": "dev-snap"
+        "midtrans/midtrans-php": "2.*"
     }
 }

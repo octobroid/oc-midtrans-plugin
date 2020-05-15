@@ -3,8 +3,8 @@
 use Event;
 use Exception;
 use Carbon\Carbon;
-use Veritrans_Snap;
-use Veritrans_Config;
+use Midtrans\Snap as MidtransSnap;
+use Midtrans\Config;
 use ApplicationException;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\Invoice;
@@ -40,11 +40,11 @@ class Snap extends ComponentBase
 
         $host = (object) $payMethod->config_data;
 
-		// Veritrans config
-		Veritrans_Config::$serverKey = $host->server_key;
-		Veritrans_Config::$isProduction = $host->test_mode ? false : true;
-		Veritrans_Config::$isSanitized = $host->is_sanitized ? true : false;
-		Veritrans_Config::$is3ds = $host->is_3ds ? true : false;
+		// Midtrans config
+		Config::$serverKey = $host->server_key;
+		Config::$isProduction = $host->test_mode ? false : true;
+		Config::$isSanitized = $host->is_sanitized ? true : false;
+		Config::$is3ds = $host->is_3ds ? true : false;
 
 		// Required
         $totals = (object) $invoice->getTotalDetails();
@@ -102,7 +102,7 @@ class Snap extends ComponentBase
 		);
 
         try {
-            $snapToken = Veritrans_Snap::getSnapToken($transaction);
+            $snapToken = MidtransSnap::getSnapToken($transaction);
         } catch (Exception $e) {
             throw new \AjaxException($e->getMessage());
         }

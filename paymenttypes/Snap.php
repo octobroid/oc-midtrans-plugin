@@ -6,8 +6,8 @@ use Flash;
 use Redirect;
 use Exception;
 use Carbon\Carbon;
-use Veritrans_Snap;
-use Veritrans_Config;
+use Midtrans\Snap as MidtransSnap;
+use Midtrans\Config;
 use ApplicationException;
 use Responsiv\Pay\Models\InvoiceLog;
 use Responsiv\Pay\Classes\GatewayBase;
@@ -99,11 +99,11 @@ class Snap extends GatewayBase
         // If already paid or utilized, don't get token
         if ($invoice->status->code != 'draft') return;
 
-		// Veritrans config
-		Veritrans_Config::$serverKey = $host->server_key;
-		Veritrans_Config::$isProduction = $host->test_mode ? false : true;
-		Veritrans_Config::$isSanitized = $host->is_sanitized ? true : false;
-		Veritrans_Config::$is3ds = $host->is_3ds ? true : false;
+		// Midtrans config
+		Config::$serverKey = $host->server_key;
+		Config::$isProduction = $host->test_mode ? false : true;
+		Config::$isSanitized = $host->is_sanitized ? true : false;
+		Config::$is3ds = $host->is_3ds ? true : false;
 
 		// Required
         $totals = (object) $invoice->getTotalDetails();
@@ -156,7 +156,7 @@ class Snap extends GatewayBase
 		);
 
         try {
-            $snapToken = Veritrans_Snap::getSnapToken($transaction);
+            $snapToken = MidtransSnap::getSnapToken($transaction);
         } catch (Exception $e) {
             Flash::error($e->getMessage());
             return;
@@ -275,7 +275,7 @@ class Snap extends GatewayBase
                         break;
                     }
 
-                    if ($invoice->markAsPaymentProcessed()) {
+                    if ($invoice->markAsPaymentProcessed()) { // error?
                         $invoice->logPaymentAttempt($transactionStatus, 1, $requestData, $response, null);
                         $invoice->updateInvoiceStatus($paymentMethod->invoice_paid_status);
                     }
